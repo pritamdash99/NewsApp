@@ -11,7 +11,7 @@ class NewsTableViewCellViewModel {
     let title : String
     let subtitle : String
     let imageURL : URL?
-    let imageData : Data? = nil
+    var imageData : Data? = nil
     
     init(title :String , subtitle : String , imageURL : URL?){
         self.title = title
@@ -26,19 +26,24 @@ class NewsTableViewCell: UITableViewCell {
     
     private let newsTitleLabel : UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 25, weight: .medium)
+        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
         return label
     }()
     
     private let subtitleLabel : UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .regular)
+        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 15, weight: .light)
         return label
     }()
     
     private let newsImageView : UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .systemRed
+        imageView.layer.cornerRadius = 6
+        imageView.layer.masksToBounds = true
+        imageView.clipsToBounds = true
+        imageView.backgroundColor = .secondarySystemBackground
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -56,10 +61,27 @@ class NewsTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        newsTitleLabel.frame = CGRect(x: 10,
+                                      y: 0,
+                                      width: contentView.frame.size.width - 170,
+                                      height: 70)
+        
+        subtitleLabel.frame = CGRect(x: 10,
+                                     y: 70,
+                                     width: contentView.frame.size.width - 170,
+                                     height: contentView.frame.size.height/2)
+        
+        newsImageView.frame = CGRect(x: contentView.frame.size.width - 150,
+                                     y: 5,
+                                     width: 140,
+                                     height: contentView.frame.size.height - 10)
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        newsTitleLabel.text = nil
+        subtitleLabel.text = nil
+        newsImageView.image = nil
     }
     
     func configure(with viewModel : NewsTableViewCellViewModel){
@@ -69,9 +91,20 @@ class NewsTableViewCell: UITableViewCell {
         //Image
         if let data = viewModel.imageData {
             newsImageView.image = UIImage(data: data)
-        }else {
+        }else if let url = viewModel.imageURL{
             //fetch
-        }
+            URLSession.shared.dataTask(with: url){
+                [weak self] data,_,error in
+                guard let data = data, error == nil else {
+                    return
+                }
+                //caching the data that already recieved :
+                viewModel.imageData = data
+                DispatchQueue.main.async {
+                    self?.newsImageView.image = UIImage(data: data)
+                }
+            }.resume()
+        } 
     }
 
 }

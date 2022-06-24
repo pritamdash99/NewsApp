@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import SafariServices
 //TableView
 //CustomCell
 //API Caller
@@ -20,7 +20,9 @@ class ViewController: UIViewController, UITableViewDelegate , UITableViewDataSou
         return table
     }()
     
+    private var articles = [Article]()
     private var viewModels = [NewsTableViewCellViewModel]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -35,6 +37,8 @@ class ViewController: UIViewController, UITableViewDelegate , UITableViewDataSou
         APICaller.shared.getTopStories { [weak self] result in
             switch result {
             case .success(let articles) :
+                //url is now holding out the articles as well
+                self?.articles = articles
                 self?.viewModels = articles.compactMap({
                     NewsTableViewCellViewModel(
                         title: $0.title,
@@ -42,7 +46,7 @@ class ViewController: UIViewController, UITableViewDelegate , UITableViewDataSou
                         imageURL: URL(string: $0.urlToImage ?? ""))
                 })
                 DispatchQueue.main.async {
-                    <#code#>
+                    self?.tableView.reloadData()
                 }
                 
                 break
@@ -61,7 +65,7 @@ class ViewController: UIViewController, UITableViewDelegate , UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return viewModels.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsTableViewCell.identifier, for: indexPath) as? NewsTableViewCell else{
@@ -74,6 +78,18 @@ class ViewController: UIViewController, UITableViewDelegate , UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let article = articles[indexPath.row]
+        
+        guard let url = URL(string: article.url ?? "")else{
+            return
+        }
+        
+        let vc = SFSafariViewController(url: url)
+        present(vc, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 150
     }
 
 }

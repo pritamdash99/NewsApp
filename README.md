@@ -1,5 +1,7 @@
 # NewsApp
 A news recieving iOS App
+This app consists of a tableView Cell which is pretty verbose but all it has 3 tableviewCell subviews for 2 lables and a image.
+There is a viewModel which holds the imageView data and url. We cache it once it is downloaded so that no redownloading happnes when we scroll up and down.
 
 Adding a demo for the app 
 

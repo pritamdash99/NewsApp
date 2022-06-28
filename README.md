@@ -1,7 +1,9 @@
 # NewsApp
 A news recieving iOS App
 This app consists of a tableView Cell which is pretty verbose but all it has 3 tableviewCell subviews for 2 lables and a image.
-There is a viewModel which holds the imageView data and url. We cache it once it is downloaded so that no redownloading happnes when we scroll up and down.
+There is a viewModel which holds the imageView data and url. We cache it once it is downloaded so that no redownloading happnes when we scroll up and down, it uses the cached version.
+There is an api caller which is a singleton with a single url and request with a single network call to fetch top headlines in the United States.
+
 
 Adding a demo for the app 
 

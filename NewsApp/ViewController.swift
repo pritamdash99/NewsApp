@@ -33,7 +33,7 @@ class ViewController: UIViewController, UITableViewDelegate , UITableViewDataSou
         tableView.dataSource = self
         view.backgroundColor = .systemBackground
         //We need to embed the 1st screen in a navigation controller
-        
+        fetchTopStories()
     }
     
     private func fetchTopStories() {

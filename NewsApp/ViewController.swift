@@ -34,6 +34,9 @@ class ViewController: UIViewController, UITableViewDelegate , UITableViewDataSou
         view.backgroundColor = .systemBackground
         //We need to embed the 1st screen in a navigation controller
         
+    }
+    
+    private func fetchTopStories() {
         APICaller.shared.getTopStories { [weak self] result in
             switch result {
             case .success(let articles) :
